@@ -36,6 +36,7 @@ describe("Waffle Charts", function () {
 	it("Loads Green Waffle Chart: Example Waffle Chart - Count", async () => {
 		await driver.get(waffleChartUrl)
 		await driver.wait(until.elementLocated(By.className("cove-component__header theme-green")), 20000)
+		await driver.sleep(2 * 1000)
 		let first = await driver.findElement(By.className('cove-component__header theme-green')).getText();
 		assert.equal(first, 'Example Waffle Chart - Count')
 
@@ -44,6 +45,7 @@ describe("Waffle Charts", function () {
 	it("Loads Purple Waffle Chart: Average Compared to Max Value", async() => {
 		await driver.get(waffleChartUrl)
 		await driver.wait(until.elementLocated(By.className("cove-component__header theme-purple")), 20000)
+		await driver.sleep(2 * 1000)
 		let first = await driver.findElement(By.className('cove-component__header theme-purple')).getText();
 		assert.equal(first, 'Comparing the Average Amount to the Max Amount')
 	});
@@ -51,6 +53,7 @@ describe("Waffle Charts", function () {
 	it("Loads Red Waffle Chart: Minimum Input Compared to Total - Filtered", async () => {
 		await driver.get(waffleChartUrl)
 		await driver.wait(until.elementLocated(By.className("cove-component__header theme-pink")), 20000)
+		await driver.sleep(2 * 1000)
 		let first = await driver.findElement(By.className('cove-component__header theme-pink')).getText();
 		assert.equal(first, 'Minimum Input Compared to Total - Filtered')
 	});
@@ -171,4 +174,56 @@ describe("Dashboards", function () {
 		assert.exists(dashboard)
 	});
 
+});
+
+describe("Data Map", function () {
+	const mapURL = 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/examples/example-data-map-cities-states.html';
+	const driver = new Builder().forBrowser("chrome").build()
+
+	// do something before test suite execution
+	// no matter if there are failed cases
+	before(async function () {
+		//Create chrome driver instance
+		//let driver = new Builder().forBrowser("chrome").build();
+	});
+
+	// do something after test suite execution is finished
+	// no matter if there are failed cases
+	after(function () {
+		// close chrome
+		return driver.quit()
+	});
+
+	beforeEach(function () {
+		// do something before test case execution
+		// no matter if there are failed cases
+		// driver.get(tp4DataVizUrl);
+		// const driver = new Builder().forBrowser("chrome").build()
+	});
+
+	afterEach(function () {
+		// do something after test case execution is finished
+		// no matter if there are failed cases
+	});
+
+	it("Example Data Map with Cities and States", async () => {
+		await driver.get(mapURL)
+		await driver.wait(until.elementLocated(By.className("cdc-open-viz-module cdc-map-outer-container md")), 20000)
+		let map = await driver.findElement(By.className("cdc-open-viz-module cdc-map-outer-container md")).isDisplayed();
+		assert.isTrue(map)
+	});
+
+	it("Example Data Map with Cities and States > Has 7 Geopoints", async () => {
+		await driver.get(mapURL)
+		await driver.wait(until.elementLocated(By.className("cdc-open-viz-module cdc-map-outer-container md")), 20000)
+		let elements = await driver.findElements(By.css(".geo-point"));
+		assert.equal(elements.length, 7)
+	});
+
+	it("Example Data Map with Cities and States > Territories are visible", async () => {
+		await driver.get(mapURL)
+		await driver.wait(until.elementLocated(By.className("territories")), 20000)
+		let elementIsDisplayed = await driver.findElement(By.className("territories")).isDisplayed();
+		assert.isTrue(elementIsDisplayed)
+	})
 });
