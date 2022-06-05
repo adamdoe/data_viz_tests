@@ -101,8 +101,8 @@ describe("Data Bites", function () {
 
 	it("Loads Max Value Data Bite", async () => {
 		await driver.get(dataBiteUrl)
-		await driver.wait(until.elementLocated(By.className("cdc-open-viz-module type-data-bite md theme-green font-large")), 20000)
-		let bite = await driver.findElement(By.className("cdc-open-viz-module type-data-bite md theme-green font-large")).getText();
+		await driver.wait(until.elementLocated(By.css(".cdc-open-viz-module.type-data-bite.md.theme-green.font-large")), 20000)
+		let bite = await driver.findElement(By.css(".cdc-open-viz-module.type-data-bite.md.theme-green.font-large")).getText();
 		assert.exists(bite)
 	});
 
@@ -226,4 +226,81 @@ describe("Data Map", function () {
 		let elementIsDisplayed = await driver.findElement(By.className("territories")).isDisplayed();
 		assert.isTrue(elementIsDisplayed)
 	})
+});
+
+describe("Bar Charts", function () {
+	const barChartURL = 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/bar-chart.html#examples';
+	const driver = new Builder().forBrowser("chrome").build()
+
+
+	// do something before test suite execution
+	// no matter if there are failed cases
+	before(async function () {
+		//Create chrome driver instance
+		//let driver = new Builder().forBrowser("chrome").build();
+	});
+
+	// do something after test suite execution is finished
+	// no matter if there are failed cases
+	after(function () {
+		// close chrome
+		return driver.quit()
+	});
+
+	beforeEach(function () {
+		// do something before test case execution
+		// no matter if there are failed cases
+		// driver.get(tp4DataVizUrl);
+		// const driver = new Builder().forBrowser("chrome").build()
+	});
+
+	afterEach(function () {
+		// do something after test case execution is finished
+		// no matter if there are failed cases
+	});
+
+	it("All Charts Load", async () => {
+		await driver.get(barChartURL)
+		await driver.wait(until.elementsLocated(By.className("cdc-open-viz-module")), 20000)
+		let elements = await driver.findElements(By.className("cdc-open-viz-module"));
+		assert.equal(elements.length, 10)
+	});
+});
+
+describe("Line Charts", function () {
+	const lineChartURL = 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/line-chart.html#examples';
+	const driver = new Builder().forBrowser("chrome").build()
+
+	// do something after test suite execution is finished
+	// no matter if there are failed cases
+	after(function () {
+		// close chrome
+		return driver.quit()
+	});
+
+	it("All Charts Load", async () => {
+		await driver.get(lineChartURL)
+		await driver.wait(until.elementsLocated(By.className("cdc-open-viz-module")), 20000)
+		let elements = await driver.findElements(By.className("cdc-open-viz-module"));
+		assert.equal(elements.length, 2)
+	});
+});
+
+describe("Pie Charts", function () {
+	const pieChartURL = 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/pie-chart.html#examples';
+	const driver = new Builder().forBrowser("chrome").build()
+
+	// do something after test suite execution is finished
+	// no matter if there are failed cases
+	after(function () {
+		// close chrome
+		return driver.quit()
+	});
+
+	it("All Charts Load", async () => {
+		await driver.get(pieChartURL)
+		await driver.wait(until.elementsLocated(By.className("cdc-open-viz-module")), 20000)
+		let elements = await driver.findElements(By.className("cdc-open-viz-module"));
+		assert.equal(elements.length, 3)
+	});
 });

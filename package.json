@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha",
+    "start": "mocha main.test.js --timeout 1000000",
+    "start:report": "mocha main.test.js --timeout 100000 > report.txt",
+    "test:browser": "live-server --port=9000 --mount=/:public"
   },
   "keywords": [],
   "author": "Adam Doe <adamnickolasdoe@gmail.com> (https://adamdoe.com/)",
