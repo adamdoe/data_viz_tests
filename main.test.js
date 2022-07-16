@@ -7,21 +7,24 @@ const URLS = {
 	waffle: 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/Waffle-Chart.html#examples',
 	dataBite: 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/data_bites.html#examples',
 	dashboards: 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/dashboard.html#examples',
-	maps: 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/examples/example-data-map-cities-states.html',
+	maps: {
+		categorical: 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/examples/example-categorical-maps.html',
+		numeric: 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/examples/example-numeric-maps.html',
+		cityState: 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/examples/example-data-map-cities-states.html',
+	},
 	barCharts: 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/bar-chart.html#examples',
 	lineCharts: 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/line-chart.html#examples',
 	pieCharts: 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/pie-chart.html#examples',
 	markupInclude: 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/Markup-Include.html#examples'
 }
 
+console.log('COVE Selenium Tests')
+console.log('Date: ', new Date().toDateString());
+
 describe("Review feature gallery in the release environment", function () {
 	const driver = new Builder().forBrowser("chrome").build()
 
-
-	// do something after test suite execution is finished
-	// no matter if there are failed cases
 	after(function () {
-		// close chrome
 		return driver.quit()
 	});
 
@@ -44,26 +47,85 @@ describe("Review feature gallery in the release environment", function () {
 		});
 
 		describe("Dashboard", async () => {
-			it("Loads Dashboard Filtered by Location and Type", async () => {
+
+			it("Dashboards Should Load", async () => {
 				await driver.get(URLS.dashboards)
-				await driver.wait(until.elementLocated(By.xpath("/html/body/div[6]/main/div[3]/div/div[5]/div/div[2]/div/div")), 20000)
-				let dashboard = await driver.findElement(By.xpath("/html/body/div[6]/main/div[3]/div/div[5]/div/div[2]/div/div")).getText();
-				assert.exists(dashboard)
+				await driver.wait(until.elementsLocated(By.className("wcms-viz-container")), 20000)
+				let elements = await driver.findElements(By.className("wcms-viz-container"));
+				assert.equal(elements.length, 3)
 			});
 
-			it("Loads Dashboard Filtered by Location and Year", async () => {
-				await driver.get(URLS.dashboards)
-				await driver.wait(until.elementLocated(By.xpath("/html/body/div[6]/main/div[3]/div/div[6]/div/div[2]/div/div")), 20000)
-				let dashboard = await driver.findElement(By.xpath("/html/body/div[6]/main/div[3]/div/div[6]/div/div[2]/div/div")).getText();
-				assert.exists(dashboard)
+			it("TEST NOT BUILT YET: Change drop downs for the dashboards. The values in the dashboard should change.", async () => {
+				assert.equal(false)
 			});
 
-			it("Loads Dashboard with No Filter", async () => {
-				await driver.get(URLS.dashboards)
-				await driver.wait(until.elementLocated(By.xpath("/html/body/div[6]/main/div[3]/div/div[7]/div/div[2]/div/div")), 20000)
-				let dashboard = await driver.findElement(By.xpath("/html/body/div[6]/main/div[3]/div/div[7]/div/div[2]/div/div")).getText();
-				assert.exists(dashboard)
+
+			// it("Loads Dashboard Filtered by Location and Type", async () => {
+			// 	await driver.get(URLS.dashboards)
+			// 	await driver.wait(until.elementLocated(By.xpath("/html/body/div[6]/main/div[3]/div/div[5]/div/div[2]/div/div")), 20000)
+			// 	let dashboard = await driver.findElement(By.xpath("/html/body/div[6]/main/div[3]/div/div[5]/div/div[2]/div/div")).getText();
+			// 	assert.exists(dashboard)
+			// });
+
+			// it("Loads Dashboard Filtered by Location and Year", async () => {
+			// 	await driver.get(URLS.dashboards)
+			// 	await driver.wait(until.elementLocated(By.xpath("/html/body/div[6]/main/div[3]/div/div[6]/div/div[2]/div/div")), 20000)
+			// 	let dashboard = await driver.findElement(By.xpath("/html/body/div[6]/main/div[3]/div/div[6]/div/div[2]/div/div")).getText();
+			// 	assert.exists(dashboard)
+			// });
+
+			// it("Loads Dashboard with No Filter", async () => {
+			// 	await driver.get(URLS.dashboards)
+			// 	await driver.wait(until.elementLocated(By.xpath("/html/body/div[6]/main/div[3]/div/div[7]/div/div[2]/div/div")), 20000)
+			// 	let dashboard = await driver.findElement(By.xpath("/html/body/div[6]/main/div[3]/div/div[7]/div/div[2]/div/div")).getText();
+			// 	assert.exists(dashboard)
+			// });
+		});
+
+		describe("Data Maps", async () => {
+
+			it("Numeric Maps", async () => {
+				await driver.get(URLS.maps.numeric)
+				await driver.wait(until.elementsLocated(By.className("wcms-viz-container")), 20000)
+				let elements = await driver.findElements(By.className("wcms-viz-container"));
+				assert.equal(elements.length, 2)
+			})
+
+			it("Categorical Maps: Load", async () => {
+				await driver.get(URLS.maps.categorical)
+				await driver.wait(until.elementsLocated(By.className("wcms-viz-container")), 20000)
+				let elements = await driver.findElements(By.className("wcms-viz-container"));
+				assert.equal(elements.length, 2)
+			})
+
+			it("Categorical Maps: Special Classes Visible", async () => {
+				await driver.get(URLS.maps.categorical)
+				await driver.wait(until.elementsLocated(By.xpath('//*[@id="legend"]/section/ul/li[1]')), 20000)
+				let specialClass = await driver.findElement(By.xpath('//*[@id="legend"]/section/ul/li[1]')).getText();
+				assert.equal(specialClass, '*')
+			})
+
+			it("Example Data Map with Cities and States", async () => {
+				await driver.get(URLS.maps.cityState)
+				await driver.wait(until.elementLocated(By.className("cdc-open-viz-module cdc-map-outer-container md")), 20000)
+				let map = await driver.findElement(By.className("cdc-open-viz-module cdc-map-outer-container md")).isDisplayed();
+				assert.isTrue(map)
 			});
+
+			it("Example Data Map with Cities and States > Has 7 Geopoints", async () => {
+				await driver.get(URLS.maps.cityState)
+				await driver.wait(until.elementLocated(By.className("cdc-open-viz-module cdc-map-outer-container md")), 20000)
+				let elements = await driver.findElements(By.css(".geo-point"));
+				assert.equal(elements.length, 7)
+			});
+
+			it("Example Data Map with Cities and States > Territories are visible", async () => {
+				await driver.get(URLS.maps.cityState)
+				await driver.wait(until.elementLocated(By.className("territories")), 20000)
+				let elementIsDisplayed = await driver.findElement(By.className("territories")).isDisplayed();
+				assert.isTrue(elementIsDisplayed)
+			})
+
 		});
 
 		it("Pie Chart", async () => {
@@ -87,12 +149,14 @@ describe("Review feature gallery in the release environment", function () {
 			assert.equal(elements.length, 10)
 		});
 
-		it("Markup Include", async () => {
-			await driver.get(URLS.markupInclude)
-			await driver.wait(until.elementsLocated(By.className("markup-include")), 20000)
-			let elements = await driver.findElements(By.className("markup-include"));
-			assert.equal(elements.length, 4)
-		});
+		describe('HTML Markup', () => {
+			it("Verify they are loading", async () => {
+				await driver.get(URLS.markupInclude)
+				await driver.wait(until.elementsLocated(By.className("markup-include")), 20000)
+				let elements = await driver.findElements(By.className("markup-include"));
+				assert.equal(elements.length, 4)
+			});
+		})
 
 	})
 
@@ -251,55 +315,4 @@ describe("Review feature gallery in the release environment", function () {
 // 		assert.exists(dashboard)
 // 	});
 
-// });
-
-// describe("Data Map", function () {
-// 	const driver = new Builder().forBrowser("chrome").build()
-
-// 	// do something before test suite execution
-// 	// no matter if there are failed cases
-// 	before(async function () {
-// 		//Create chrome driver instance
-// 		//let driver = new Builder().forBrowser("chrome").build();
-// 	});
-
-// 	// do something after test suite execution is finished
-// 	// no matter if there are failed cases
-// 	after(function () {
-// 		// close chrome
-// 		return driver.quit()
-// 	});
-
-// 	beforeEach(function () {
-// 		// do something before test case execution
-// 		// no matter if there are failed cases
-// 		// driver.get(tp4DataVizUrl);
-// 		// const driver = new Builder().forBrowser("chrome").build()
-// 	});
-
-// 	afterEach(function () {
-// 		// do something after test case execution is finished
-// 		// no matter if there are failed cases
-// 	});
-
-// 	it("Example Data Map with Cities and States", async () => {
-// 		await driver.get(URLS.maps)
-// 		await driver.wait(until.elementLocated(By.className("cdc-open-viz-module cdc-map-outer-container md")), 20000)
-// 		let map = await driver.findElement(By.className("cdc-open-viz-module cdc-map-outer-container md")).isDisplayed();
-// 		assert.isTrue(map)
-// 	});
-
-// 	it("Example Data Map with Cities and States > Has 7 Geopoints", async () => {
-// 		await driver.get(URLS.maps)
-// 		await driver.wait(until.elementLocated(By.className("cdc-open-viz-module cdc-map-outer-container md")), 20000)
-// 		let elements = await driver.findElements(By.css(".geo-point"));
-// 		assert.equal(elements.length, 7)
-// 	});
-
-// 	it("Example Data Map with Cities and States > Territories are visible", async () => {
-// 		await driver.get(URLS.maps)
-// 		await driver.wait(until.elementLocated(By.className("territories")), 20000)
-// 		let elementIsDisplayed = await driver.findElement(By.className("territories")).isDisplayed();
-// 		assert.isTrue(elementIsDisplayed)
-// 	})
 // });
