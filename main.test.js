@@ -173,11 +173,20 @@ describe("Review feature gallery in the release environment", function () {
 			})
 
 			describe("US Map with Counties", () => {
+
 				it("County Map Loads in 5-10 Seconds", async () => {
 					await driver.get(URLS.maps.county)
-					await driver.wait(until.elementsLocated(By.css("cdc-open-viz-module")), 20000)
-					let elements = await driver.findElements(By.className("cdc-open-viz-module"));
+					await driver.wait(until.elementsLocated(By.css(".cdc-open-viz-module")), 20000)
+					let elements = await driver.findElements(By.css(".cdc-open-viz-module"));
 					assert.equal(1, elements.length)
+				})
+
+				it("County Map Zoom Functions", async () => {
+					await driver.get(URLS.maps.county)
+					await driver.wait(until.elementsLocated(By.css(".county--Mendocino")), 20000)
+					let california = await driver.findElement(By.css(".county--Mendocino")).click()
+					let transformToCompare = await driver.findElement(By.className("countyMapGroup")).getAttribute('transform')
+					assert.equal('translate(722.6618306838891,39.16062491778308) scale(2.212319059920627)', transformToCompare)
 				})
 			})
 
