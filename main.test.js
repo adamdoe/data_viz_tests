@@ -3,6 +3,46 @@ const { By, Key, Builder, until } = require("selenium-webdriver");
 require("chromedriver");
 
 
+describe("Review feature gallery in the release environment", function () {
+	const url = 'https://www.cdc.gov/wcms/4.0/cdc-wp/navigation/navigation-only-map.html#examples';
+	const driver = new Builder().forBrowser("chrome").build()
+
+	// do something before test suite execution
+	// no matter if there are failed cases
+	before(async function () {
+		//Create chrome driver instance
+		//let driver = new Builder().forBrowser("chrome").build();
+	});
+
+	// do something after test suite execution is finished
+	// no matter if there are failed cases
+	after(function () {
+		// close chrome
+		return driver.quit()
+	});
+
+	beforeEach(function () {
+		// do something before test case execution
+		// no matter if there are failed cases
+		// driver.get(tp4DataVizUrl);
+		// const driver = new Builder().forBrowser("chrome").build()
+	});
+
+	afterEach(function () {
+		// do something after test case execution is finished
+		// no matter if there are failed cases
+	});
+
+	it("Has all navigation maps", async () => {
+		await driver.get(url)
+		await driver.wait(until.elementsLocated(By.className("cdc-open-viz-module")), 20000)
+		let elements = await driver.findElements(By.className("cdc-open-viz-module"));
+		assert.equal(elements.length, 3)
+	});
+
+});
+
+
 describe("Waffle Charts", function () {
 	const waffleChartUrl = 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/Waffle-Chart.html#examples';
 	const driver = new Builder().forBrowser("chrome").build()
