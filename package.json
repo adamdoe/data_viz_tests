@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "start:maps": "mocha main.test.js -g 'County Map Zoom Functions' --timeout 100000",
+    "start:maps": "mocha main.test.js -g 'Images/Data change on Clicks' --timeout 100000",
     "start": "mocha main.test.js --timeout 1000000",
     "start:report": "mocha main.test.js --timeout 100000 > report.txt",
     "test:browser": "live-server --port=9000 --mount=/:public"

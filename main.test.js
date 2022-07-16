@@ -20,12 +20,14 @@ const URLS = {
 		world: 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/examples/example-world-data-map.html',
 		filterable: 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/examples/example-numeric-maps-filterable.html',
 		hex: 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/examples/Example-Hex-Map.html',
-		county: 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/examples/example-us-map-counties.html'
+		county: 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/examples/example-us-map-counties.html',
+		singleStateMap: 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/examples/example-data-state-map-counties.html'
 	},
 	barCharts: 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/bar-chart.html#examples',
 	lineCharts: 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/line-chart.html#examples',
 	pieCharts: 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/pie-chart.html#examples',
-	markupInclude: 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/Markup-Include.html#examples'
+	markupInclude: 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/Markup-Include.html#examples',
+	ventilationTool: 'https://www.cdc.gov/coronavirus/2019-ncov/prevent-getting-sick/interactive-ventilation-tool.html'
 }
 
 console.log('COVE Selenium Tests')
@@ -190,6 +192,20 @@ describe("Review feature gallery in the release environment", function () {
 				})
 			})
 
+			describe("Single State Map with Counties", () => {
+
+				it("Reduce browser to small viewport and click on a county, tooltip should pop-up on click", async () => {
+					await driver.get(URLS.maps.singleStateMap)
+					driver.manage().window().setRect({ width: 300, height: 800 })
+					await driver.wait(until.elementsLocated(By.css(".county--Tuscaloosa")), 20000)
+					let countyToClick = await driver.findElement(By.css(".county--Tuscaloosa")).click()
+					await driver.wait(until.elementsLocated(By.css(".modal-content .content > div strong")), 20000)
+					let modalContent = await driver.findElement(By.css(".modal-content .content > div strong")).getText()
+					assert.equal('County: Tuscaloosa', modalContent)
+				})
+
+			})
+
 		});
 
 		it("Pie Chart", async () => {
@@ -220,6 +236,42 @@ describe("Review feature gallery in the release environment", function () {
 				let elements = await driver.findElements(By.className("markup-include"));
 				assert.equal(elements.length, 4)
 			});
+		})
+
+		describe('Ventilation Tool', () => {
+			it("Ventilation Tool: Loads", async () => {
+				await driver.get(URLS.ventilationTool)
+				await driver.wait(until.elementsLocated(By.className("type-dashboard")), 20000)
+				let elements = await driver.findElements(By.className("type-dashboard"));
+				assert.equal(elements.length, 1)
+			});
+
+			it("Images/Data change on Clicks", async() => {
+				await driver.get(URLS.ventilationTool)
+
+				// Set HVAC operation
+				await driver.wait(until.elementsLocated(By.css('#filter-0 [value="AUTO/Intermittent"]')), 20000)
+				await driver.findElement(By.css('#filter-0 [value="AUTO/Intermittent"]')).click();
+
+				// Filter (Skip if no HVAC system)
+				await driver.wait(until.elementsLocated(By.css('#filter-1 [value="Not Sure"]')), 20000)
+				await driver.findElement(By.css('#filter-1 [value="Not Sure"]')).click();
+				
+				// Portable HEPA Air Cleaner
+				await driver.wait(until.elementsLocated(By.css('#filter-2 [value="Yes"]')), 20000)
+				await driver.findElement(By.css('#filter-2 [value="Yes"]')).click();
+
+				// Open Window
+				await driver.wait(until.elementsLocated(By.css('#filter-3 [value="Yes"]')), 20000)
+				await driver.findElement(By.css('#filter-3 [value="Yes"]')).click();
+
+				// Extra hour of ventilation
+				await driver.wait(until.elementsLocated(By.css('#filter-4 [value="No"]')), 20000)
+				await driver.findElement(By.css('#filter-4 [value="No"]')).click();
+
+				let fourHourVisitText = await driver.findElement(By.css("body > div.container.d-flex.flex-wrap.body-wrapper.bg-white > main > div:nth-child(3) > div > div.syndicate > div.row.venttool > div > div > div:nth-child(2) > div > div:nth-child(1) > div > div > div > div > div:nth-child(1) > div > div > div > div.bite.bite-bottom > div > div.bite-content > p > span")).getText();
+				assert.equal("84%", fourHourVisitText)
+			})
 		})
 
 	})
