@@ -13,7 +13,7 @@
   "author": "Adam Doe <adamnickolasdoe@gmail.com> (https://adamdoe.com/)",
   "license": "ISC",
   "dependencies": {
-    "chromedriver": "^101.0.0",
+    "chromedriver": "103",
     "geckodriver": "^3.0.1",
     "mocha": "^10.0.0",
     "selenium-webdriver": "^4.2.0"
