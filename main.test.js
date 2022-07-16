@@ -48,6 +48,7 @@ describe("Review feature gallery in the release environment", function () {
 
 		describe("Dashboard", async () => {
 
+
 			it("Dashboards Should Load", async () => {
 				await driver.get(URLS.dashboards)
 				await driver.wait(until.elementsLocated(By.className("wcms-viz-container")), 20000)
@@ -55,31 +56,15 @@ describe("Review feature gallery in the release environment", function () {
 				assert.equal(elements.length, 3)
 			});
 
-			it("TEST NOT BUILT YET: Change drop downs for the dashboards. The values in the dashboard should change.", async () => {
-				assert.equal(false)
+			it("Dashboards Change", async () => {
+				await driver.get(URLS.dashboards)
+				await driver.wait(until.elementsLocated(By.css("[value=Arkansas]")), 20000)
+				let element = await driver.findElement(By.css('[value=Arkansas]')).click();
+				let foo = await driver.wait(until.elementLocated(By.css('[value=Arkansas]')), 3000, 'Timed out after 30 seconds', 5000);
+				let arkansasCircleContent = await driver.findElement(By.css("body > div.container.d-flex.flex-wrap.body-wrapper.bg-white > main > div:nth-child(3) > div > div.row.mb-3.bg-gray-l3 > div > div.mb-3 > div > div > div > div:nth-child(4) > div:nth-child(1) > div > div > div > div > div > svg > text")).getText();
+				assert.equal("1,418", arkansasCircleContent)
 			});
 
-
-			// it("Loads Dashboard Filtered by Location and Type", async () => {
-			// 	await driver.get(URLS.dashboards)
-			// 	await driver.wait(until.elementLocated(By.xpath("/html/body/div[6]/main/div[3]/div/div[5]/div/div[2]/div/div")), 20000)
-			// 	let dashboard = await driver.findElement(By.xpath("/html/body/div[6]/main/div[3]/div/div[5]/div/div[2]/div/div")).getText();
-			// 	assert.exists(dashboard)
-			// });
-
-			// it("Loads Dashboard Filtered by Location and Year", async () => {
-			// 	await driver.get(URLS.dashboards)
-			// 	await driver.wait(until.elementLocated(By.xpath("/html/body/div[6]/main/div[3]/div/div[6]/div/div[2]/div/div")), 20000)
-			// 	let dashboard = await driver.findElement(By.xpath("/html/body/div[6]/main/div[3]/div/div[6]/div/div[2]/div/div")).getText();
-			// 	assert.exists(dashboard)
-			// });
-
-			// it("Loads Dashboard with No Filter", async () => {
-			// 	await driver.get(URLS.dashboards)
-			// 	await driver.wait(until.elementLocated(By.xpath("/html/body/div[6]/main/div[3]/div/div[7]/div/div[2]/div/div")), 20000)
-			// 	let dashboard = await driver.findElement(By.xpath("/html/body/div[6]/main/div[3]/div/div[7]/div/div[2]/div/div")).getText();
-			// 	assert.exists(dashboard)
-			// });
 		});
 
 		describe("Data Maps", async () => {
