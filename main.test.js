@@ -1,3 +1,9 @@
+/**
+ * COVE: Automated Tests for Template Package Exampless
+ * Reaches out to cdc.gov template package urls to make sure examples are loading properly
+ * Last Modified: 07/16/2022
+ */
+
 const { assert } = require("chai");
 const { By, Key, Builder, until } = require("selenium-webdriver");
 require("chromedriver");
@@ -11,7 +17,10 @@ const URLS = {
 		categorical: 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/examples/example-categorical-maps.html',
 		numeric: 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/examples/example-numeric-maps.html',
 		cityState: 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/examples/example-data-map-cities-states.html',
-		world: 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/examples/example-world-data-map.html'
+		world: 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/examples/example-world-data-map.html',
+		filterable: 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/examples/example-numeric-maps-filterable.html',
+		hex: 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/examples/Example-Hex-Map.html',
+		county: 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/examples/example-us-map-counties.html'
 	},
 	barCharts: 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/bar-chart.html#examples',
 	lineCharts: 'https://www.cdc.gov/wcms/4.0/cdc-wp/data-presentation/line-chart.html#examples',
@@ -49,7 +58,6 @@ describe("Review feature gallery in the release environment", function () {
 
 		describe("Dashboard", async () => {
 
-
 			it("Dashboards Should Load", async () => {
 				await driver.get(URLS.dashboards)
 				await driver.wait(until.elementsLocated(By.className("wcms-viz-container")), 20000)
@@ -84,6 +92,13 @@ describe("Review feature gallery in the release environment", function () {
 				assert.equal(elements.length, 2)
 			})
 
+			it("Categorical Maps: Special Classes Visible", async () => {
+				await driver.get(URLS.maps.categorical)
+				await driver.wait(until.elementsLocated(By.xpath('//*[@id="legend"]/section/ul/li[1]')), 20000)
+				let specialClass = await driver.findElement(By.xpath('//*[@id="legend"]/section/ul/li[1]')).getText();
+				assert.equal(specialClass, '*')
+			})
+
 			describe("World Maps", () => {
 				it("Loads World Map", async () => {
 					await driver.get(URLS.maps.world)
@@ -104,32 +119,66 @@ describe("Review feature gallery in the release environment", function () {
 				});
 			})
 
-			it("Categorical Maps: Special Classes Visible", async () => {
-				await driver.get(URLS.maps.categorical)
-				await driver.wait(until.elementsLocated(By.xpath('//*[@id="legend"]/section/ul/li[1]')), 20000)
-				let specialClass = await driver.findElement(By.xpath('//*[@id="legend"]/section/ul/li[1]')).getText();
-				assert.equal(specialClass, '*')
+			describe("Filterable Map", () => {
+				it("Loads Filterable Map", async () => {
+					await driver.get(URLS.maps.filterable)
+					await driver.wait(until.elementsLocated(By.className("wcms-viz-container")), 20000)
+					let elements = await driver.findElements(By.className("wcms-viz-container"));
+					assert.equal(elements.length, 1)
+				})
+
+				it("Change the filters and the values in the map should change", async () => {
+					await driver.get(URLS.maps.filterable)
+					await driver.wait(until.elementsLocated(By.css('option[value="Male"]')), 200000)
+					let element = await driver.findElement(By.css('option[value="Male"]')).click();
+					let foo = await driver.wait(until.elementLocated(By.css('option[value="Male"]')), 200000, 'Timed out after 5 seconds', 5000);
+
+					await driver.wait(until.elementsLocated(By.css('#legend > section.legend-section > ul > li:nth-child(1) > span.label')), 200000)
+					let FirstItemInTableText = await driver.findElement(By.css('#legend > section.legend-section > ul > li:nth-child(1) > span.label')).getText();
+					assert.equal("8 - 10", FirstItemInTableText)
+				});
 			})
 
-			it("Example Data Map with Cities and States", async () => {
-				await driver.get(URLS.maps.cityState)
-				await driver.wait(until.elementLocated(By.className("cdc-open-viz-module cdc-map-outer-container md")), 20000)
-				let map = await driver.findElement(By.className("cdc-open-viz-module cdc-map-outer-container md")).isDisplayed();
-				assert.isTrue(map)
-			});
+			describe("US Map with Cities", () => {
 
-			it("Example Data Map with Cities and States > Has 7 Geopoints", async () => {
-				await driver.get(URLS.maps.cityState)
-				await driver.wait(until.elementLocated(By.className("cdc-open-viz-module cdc-map-outer-container md")), 20000)
-				let elements = await driver.findElements(By.css(".geo-point"));
-				assert.equal(elements.length, 7)
-			});
+				it("City State Map Loads", async () => {
+					await driver.get(URLS.maps.cityState)
+					await driver.wait(until.elementLocated(By.className("cdc-open-viz-module cdc-map-outer-container md")), 20000)
+					let map = await driver.findElement(By.className("cdc-open-viz-module cdc-map-outer-container md")).isDisplayed();
+					assert.isTrue(map)
+				});
 
-			it("Example Data Map with Cities and States > Territories are visible", async () => {
-				await driver.get(URLS.maps.cityState)
-				await driver.wait(until.elementLocated(By.className("territories")), 20000)
-				let elementIsDisplayed = await driver.findElement(By.className("territories")).isDisplayed();
-				assert.isTrue(elementIsDisplayed)
+				it("Displays 7 cities", async () => {
+					await driver.get(URLS.maps.cityState)
+					await driver.wait(until.elementLocated(By.className("cdc-open-viz-module cdc-map-outer-container md")), 20000)
+					let elements = await driver.findElements(By.css(".geo-point"));
+					assert.equal(elements.length, 7)
+				});
+
+				it("Territories are visible", async () => {
+					await driver.get(URLS.maps.cityState)
+					await driver.wait(until.elementLocated(By.className("territories")), 20000)
+					let elementIsDisplayed = await driver.findElement(By.className("territories")).isDisplayed();
+					assert.isTrue(elementIsDisplayed)
+				})
+			})
+
+			describe("Hex Map", () => {
+				it("Hex Map Loads", async () => {
+					await driver.get(URLS.maps.hex)
+					await driver.wait(until.elementsLocated(By.className("cdc-open-viz-module")), 20000)
+					let elements = await driver.findElements(By.className("cdc-open-viz-module"));
+					assert.equal(2, elements.length)
+				})
+			})
+
+			describe("US Map with Counties", () => {
+				it("County Map Loads in 5-10 Seconds", async () => {
+					await driver.get(URLS.maps.county)
+					await driver.wait(until.elementsLocated(By.css("cdc-open-viz-module")), 20000)
+					let elements = await driver.findElements(By.className("cdc-open-viz-module"));
+					assert.equal(1, elements.length)
+				})
 			})
 
 		});
