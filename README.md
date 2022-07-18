@@ -4,18 +4,28 @@ Website automation tests for making sure COVE elements display on WCMS.
 
 ## Installation
 
+### Install Chrome Driver
+*This appears to be the official repository but proceed at your own risk since I'm not a chromedriver expert.*
+
+__Check chrome version:__
 ```bash
-npm install
+chrome://version
 ```
 
-Make sure you have chromedriver installed. This appears to be the official repository but proceed at your own risk since I'm not a chromedriver expert. You should be able to compare your chrome version by going here `chrome://version` and then find your download here:
-
-```
+__Install Version__
+```bash
 https://chromedriver.storage.googleapis.com/index.html
 ```
 
-Once chromedriver is in your path you can run either:
+__Alternatively use Brew to install Chrome Driver:__
+```bash
+brew install --cask chromedriver
+```
 
+__Install node modules__
+```bash
+npm install
+```
 
 ## Usage
 
